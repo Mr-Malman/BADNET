@@ -1,0 +1,20 @@
+#!/bin/bash
+# BADNET Launcher Script
+# Author: ARYA KONER
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Change to the script directory
+cd "$SCRIPT_DIR"
+
+# Check if virtual environment exists
+if [ ! -d "cyber_env" ]; then
+    echo "Virtual environment 'cyber_env' not found!"
+    echo "Please run the setup script first."
+    exit 1
+fi
+
+# Activate virtual environment and run BADNET
+source cyber_env/bin/activate
+python3 BADNET.py "$@"
