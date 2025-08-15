@@ -257,3 +257,4 @@ If you encounter any issues:
 ---
 
 **BADNET - Protecting systems with AI-powered intelligence since 2025** 
+# BADNET
