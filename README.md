@@ -21,7 +21,7 @@
 
 ### Key Features
 
-- 🤖 **AI-Powered Detection**: Uses 9 different machine learning models
+- **AI-Powered Detection**: Uses 9 different machine learning models
 - **Real-time Monitoring**: System and network activity analysis
 - **Intelligent Alerts**: Probability-based attack detection
 - **Performance Analytics**: Comprehensive reporting and metrics
@@ -236,6 +236,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **ARYA KONER**
 
 - **GitHub**: [@aryakoner](https://github.com/aryakoner)
+- **Linkedin**: [@aryakoner](https://www.linkedin.com/in/hackarya007/)
 - **Project**: BADNET | AI-Powered Cyber Surveillance System
 
 ## Acknowledgments
