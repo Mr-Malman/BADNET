@@ -1,0 +1,30 @@
+[Unit]
+Description=BADNET 24/7 Cyber Attack Monitoring Service
+Documentation=https://github.com/hackarya/BADNET
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=arya
+Group=staff
+WorkingDirectory=/Users/Arya/Documents/GitHub/BADNET
+Environment=PATH=/Users/Arya/Documents/GitHub/BADNET/BADNET/bin
+ExecStart=/Users/Arya/Documents/GitHub/BADNET/BADNET/bin/python3 /Users/Arya/Documents/GitHub/BADNET/BADNET.py monitor --mode both --interval 10 --duration 0
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=badnet
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/Users/Arya/Documents/GitHub/BADNET/logs
+ReadWritePaths=/Users/Arya/Documents/GitHub/BADNET/processed_data
+
+[Install]
+WantedBy=multi-user.target

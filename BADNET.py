@@ -73,10 +73,10 @@ def check_system_status():
     status_table.add_column("Details", style="yellow")
     
     # Check virtual environment
-    if "cyber_env" in sys.prefix:
+    if "BADNET" in sys.prefix:
         status_table.add_row("Virtual Environment", "Active", f"Using: {sys.prefix}")
     else:
-        status_table.add_row("Virtual Environment", "Inactive", "Please activate cyber_env")
+        status_table.add_row("Virtual Environment", "Inactive", "Please activate BADNET")
     
     # Check model files
     model_path = Path("processed_data/supervised_learning/best_model.pkl")
@@ -457,6 +457,11 @@ types of cyber attacks including DoS, Probe, R2L, and U2R attacks.
 • [cyan]config[/cyan] - Configure BADNET settings and preferences
 • [cyan]help-extended[/cyan] - Show this detailed help
 
+[bold green]Advanced Monitoring Commands:[/bold green]
+• [cyan]verbose-monitor[/cyan] - Run verbose monitoring with detailed prediction results
+• [cyan]monitor-24x7[/cyan] - Start 24/7 continuous monitoring service
+• [cyan]monitor-background[/cyan] - Run monitoring in background mode
+
 [bold green]Usage Examples:[/bold green]
 • [yellow]badnet status[/yellow] - Check if system is ready
 • [yellow]badnet train[/yellow] - Train the AI models
@@ -467,6 +472,14 @@ types of cyber attacks including DoS, Probe, R2L, and U2R attacks.
 • [yellow]badnet logs[/yellow] - View monitoring logs
 • [yellow]badnet config[/yellow] - Configure settings
 
+[bold green]Advanced Monitoring Examples:[/bold green]
+• [yellow]badnet verbose-monitor --interval 5 --duration 30[/yellow] - Verbose monitoring for 30 seconds
+• [yellow]badnet verbose-monitor --interval 10 --duration 0[/yellow] - Continuous verbose monitoring
+• [yellow]badnet monitor-24x7[/yellow] - Start 24/7 monitoring service
+• [yellow]badnet monitor-background[/yellow] - Run monitoring in background
+• [yellow]./verbose_monitor.sh[/yellow] - Run verbose monitoring script directly
+• [yellow]./monitor_24x7.sh[/yellow] - Run 24/7 monitoring script directly
+
 [bold green]Monitoring Modes:[/bold green]
 • [cyan]system[/cyan] - Monitor system activity (CPU, memory, disk, processes)
 • [cyan]network[/cyan] - Monitor network activity (connections, traffic, ports)
@@ -475,6 +488,16 @@ types of cyber attacks including DoS, Probe, R2L, and U2R attacks.
 [bold green]Alert Levels:[/bold green]
 • [yellow] WARNING[/yellow] - Moderate suspicious activity (50-80% probability)
 • [red]CRITICAL[/red] - High probability of attack (80%+ probability)
+
+[bold green]Verbose Monitoring Features:[/bold green]
+• [cyan]Detailed Timestamps[/cyan] - Exact time for each prediction
+• [cyan]Prediction Numbers[/cyan] - Sequential prediction tracking (#1, #2, #3...)
+• [cyan]Attack Detection Results[/cyan] - Clear YES/NO for each prediction
+• [cyan]Probability Percentages[/cyan] - Exact attack probability (0.00%, 25.5%, etc.)
+• [cyan]Threat Levels[/cyan] - NORMAL, LOW_SUSPICION, MODERATE_SUSPICION, HIGH_PROBABILITY_ATTACK
+• [cyan]System Status[/cyan] - CPU, Memory, Process Count, Disk Activity
+• [cyan]Network Status[/cyan] - Connections, Packets, Traffic Level
+• [cyan]Prediction History[/cyan] - Timeline of all monitoring results
 
 [bold green]System Requirements:[/bold green]
 • Python 3.7+
@@ -488,6 +511,102 @@ types of cyber attacks including DoS, Probe, R2L, and U2R attacks.
 """
     
     console.print(Panel(help_text, title="BADNET Help", border_style="blue"))
+
+@app.command()
+def verbose_monitor(
+    interval: int = typer.Option(5, "--interval", "-i", help="Monitoring interval in seconds"),
+    duration: Optional[int] = typer.Option(None, "--duration", "-d", help="Monitoring duration in seconds (0 for continuous)")
+):
+    """Run verbose monitoring with detailed prediction results."""
+    show_banner()
+    
+    console.print("[bold blue]Starting Verbose BADNET Monitoring...[/bold blue]")
+    console.print(f"[green]Interval:[/green] {interval} seconds")
+    console.print(f"[green]Duration:[/green] {'Continuous' if duration is None else f'{duration} seconds'}")
+    console.print("[green]Mode:[/green] Detailed Prediction Analysis")
+    console.print("")
+    
+    # Check if verbose monitor script exists
+    verbose_script = Path("verbose_monitor.py")
+    if not verbose_script.exists():
+        console.print("[red]Error: verbose_monitor.py not found![/red]")
+        console.print("Please ensure the verbose monitoring script is available.")
+        return
+    
+    # Build command
+    cmd = ["python3", "verbose_monitor.py", "--interval", str(interval)]
+    if duration is not None:
+        cmd.extend(["--duration", str(duration)])
+    
+    try:
+        # Run verbose monitoring
+        subprocess.run(cmd, check=True)
+    except subprocess.CalledProcessError as e:
+        console.print(f"[red]Error running verbose monitoring: {e}[/red]")
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Verbose monitoring stopped by user[/yellow]")
+
+@app.command()
+def monitor_24x7():
+    """Start 24/7 continuous monitoring service."""
+    show_banner()
+    
+    console.print("[bold blue]Starting BADNET 24/7 Monitoring Service...[/bold blue]")
+    console.print("[green]Mode:[/green] Continuous monitoring")
+    console.print("[green]Interval:[/green] 10 seconds")
+    console.print("[green]Duration:[/green] 24/7 operation")
+    console.print("")
+    
+    # Check if 24x7 script exists
+    script_24x7 = Path("monitor_24x7.sh")
+    if not script_24x7.exists():
+        console.print("[red]Error: monitor_24x7.sh not found![/red]")
+        console.print("Please ensure the 24/7 monitoring script is available.")
+        return
+    
+    try:
+        # Make script executable and run
+        os.chmod(script_24x7, 0o755)
+        console.print("[green]Starting 24/7 monitoring...[/green]")
+        console.print("[yellow]Press Ctrl+C to stop[/yellow]")
+        console.print("")
+        
+        subprocess.run(["./monitor_24x7.sh"], check=True)
+    except subprocess.CalledProcessError as e:
+        console.print(f"[red]Error running 24/7 monitoring: {e}[/red]")
+    except KeyboardInterrupt:
+        console.print("\n[yellow]24/7 monitoring stopped by user[/yellow]")
+
+@app.command()
+def monitor_background():
+    """Run monitoring in background mode."""
+    show_banner()
+    
+    console.print("[bold blue]Starting BADNET Background Monitoring...[/bold blue]")
+    console.print("[green]Mode:[/green] Background operation")
+    console.print("[green]Output:[/green] Saved to monitoring.log")
+    console.print("")
+    
+    try:
+        # Start background monitoring
+        cmd = ["nohup", "python3", "verbose_monitor.py", "--interval", "10", "--duration", "0"]
+        
+        with open("monitoring.log", "w") as log_file:
+            process = subprocess.Popen(
+                cmd,
+                stdout=log_file,
+                stderr=subprocess.STDOUT,
+                preexec_fn=os.setsid
+            )
+        
+        console.print(f"[green]Background monitoring started with PID: {process.pid}[/green]")
+        console.print("[green]Output saved to: monitoring.log[/green]")
+        console.print("[yellow]Use 'ps aux | grep verbose_monitor' to check status[/yellow]")
+        console.print("[yellow]Use 'tail -f monitoring.log' to view live output[/yellow]")
+        console.print("[yellow]Use 'kill {process.pid}' to stop monitoring[/yellow]")
+        
+    except Exception as e:
+        console.print(f"[red]Error starting background monitoring: {e}[/red]")
 
 @app.command()
 def version():
@@ -533,16 +652,19 @@ def main():
             console.print("\n[bold blue]BADNET Main Menu[/bold blue]")
             console.print("1. Check System Status")
             console.print("2. Train AI Models")
-            console.print("3. Start Monitoring")
-            console.print("4. AI Model Demo")
-            console.print("5. System Information")
-            console.print("6. View Logs")
-            console.print("7. Configuration")
-            console.print("8. Help")
-            console.print("9. Version Info")
+            console.print("3. Start Basic Monitoring")
+            console.print("4. Start Verbose Monitoring")
+            console.print("5. Start 24/7 Monitoring")
+            console.print("6. Start Background Monitoring")
+            console.print("7. AI Model Demo")
+            console.print("8. System Information")
+            console.print("9. View Logs")
+            console.print("10. Configuration")
+            console.print("11. Help")
+            console.print("12. Version Info")
             console.print("0. Exit")
             
-            choice = Prompt.ask("\nSelect option", choices=["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"])
+            choice = Prompt.ask("\nSelect option", choices=["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "0"])
             
             if choice == "1":
                 status()
@@ -556,16 +678,25 @@ def main():
                 save_log = Confirm.ask("Save log to file?")
                 monitor(mode=mode, interval=int(interval), duration=duration, save_log=save_log)
             elif choice == "4":
-                demo()
+                interval = Prompt.ask("Verbose monitoring interval (seconds)", default="5")
+                duration = Prompt.ask("Duration (seconds, 0 for continuous)", default="30")
+                duration = int(duration) if duration != "0" else None
+                verbose_monitor(interval=int(interval), duration=duration)
             elif choice == "5":
-                system_info()
+                monitor_24x7()
             elif choice == "6":
-                logs()
+                monitor_background()
             elif choice == "7":
-                config()
+                demo()
             elif choice == "8":
-                help_extended()
+                system_info()
             elif choice == "9":
+                logs()
+            elif choice == "10":
+                config()
+            elif choice == "11":
+                help_extended()
+            elif choice == "12":
                 version()
             elif choice == "0":
                 console.print("\n[bold green]Thank you for using BADNET![/bold green]")

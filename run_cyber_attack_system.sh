@@ -18,11 +18,11 @@ fi
 
 # Create virtual environment
 echo "Creating virtual environment..."
-python3 -m venv cyber_env
+python3 -m venv BADNET
 
 # Activate virtual environment
 echo "Activating virtual environment..."
-source cyber_env/bin/activate
+source BADNET/bin/activate
 
 # Upgrade pip
 echo "Upgrading pip..."

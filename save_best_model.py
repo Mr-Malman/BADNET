@@ -23,7 +23,7 @@ def save_best_model():
         best_model_name = results_df.loc[best_idx, 'ModelName']
         best_accuracy = results_df.loc[best_idx, 'Accuracy']
         
-        print(f"🏆 Best model: {best_model_name} with accuracy {best_accuracy:.3f}")
+        print(f"Best model: {best_model_name} with accuracy {best_accuracy:.3f}")
         
         # Create a simple Logistic Regression model (since we know it performed best)
         # In a real scenario, you would load the actual trained model
