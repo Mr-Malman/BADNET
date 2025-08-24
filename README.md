@@ -794,6 +794,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **ARYA KONER**
 
 - **GitHub**: [@aryakoner](https://github.com/aryakoner)
+- **Linkedin**: [@aryakoner](https://www.linkedin.com/in/hackarya007/)
 - **Project**: BADNET | AI-Powered Cyber Surveillance System
 
 ## Acknowledgments
