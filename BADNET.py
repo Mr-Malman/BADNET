@@ -124,13 +124,48 @@ def train():
         task = progress.add_task("Training models...", total=None)
         
         try:
-            # Run the training pipeline
-            result = subprocess.run(
-                ["./run_cyber_attack_system.sh"],
+            # Run the training pipeline directly with Python commands (Windows compatible)
+            console.print("Running data cleaning...")
+            result1 = subprocess.run(
+                ["python", "codes/cyber_clean.py"],
                 capture_output=True,
                 text=True,
                 shell=True
             )
+            
+            if result1.returncode != 0:
+                console.print(f"\n[bold red]Data cleaning failed![/bold red]")
+                console.print(f"Error: {result1.stderr}")
+                return
+                
+            console.print("Running feature engineering...")
+            result2 = subprocess.run(
+                ["python", "codes/cyber_featureEngineering.py", "--ask", "0", "--verbose", "1"],
+                capture_output=True,
+                text=True,
+                shell=True
+            )
+            
+            if result2.returncode != 0:
+                console.print(f"\n[bold red]Feature engineering failed![/bold red]")
+                console.print(f"Error: {result2.stderr}")
+                return
+                
+            console.print("Running model training...")
+            result3 = subprocess.run(
+                ["python", "codes/cyber_train.py", "--start_clean", "1", "--ask", "0", "--verbose", "1", "--plot", "1"],
+                capture_output=True,
+                text=True,
+                shell=True
+            )
+            
+            if result3.returncode != 0:
+                console.print(f"\n[bold red]Model training failed![/bold red]")
+                console.print(f"Error: {result3.stderr}")
+                return
+                
+            # All steps completed successfully
+            result = type('obj', (object,), {'returncode': 0})()
             
             if result.returncode == 0:
                 console.print("\n[bold green]Training completed successfully![/bold green]")
@@ -164,7 +199,7 @@ def train():
                     best_model = df.loc[best_idx, 'ModelName']
                     best_accuracy = df.loc[best_idx, 'Accuracy']
                     
-                    console.print(f"\n[bold green]🏆 Best Model: {best_model} with {best_accuracy:.1%} accuracy[/bold green]")
+                    console.print(f"\n[bold green]Best Model: {best_model} with {best_accuracy:.1%} accuracy[/bold green]")
                     
             else:
                 console.print(f"\n[bold red]Training failed![/bold red]")
@@ -280,13 +315,13 @@ def system_info():
     process_table.add_column("Memory %", style="magenta")
     
     processes = []
+    from contextlib import suppress
+    
     for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_percent']):
-        try:
+        with suppress(psutil.NoSuchProcess, psutil.AccessDenied):
             info = proc.info
             if info['cpu_percent'] is not None and info['memory_percent'] is not None:
                 processes.append(info)
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            pass
     
     # Sort by CPU usage and take top 10
     processes.sort(key=lambda x: x['cpu_percent'], reverse=True)
@@ -406,7 +441,7 @@ def config():
         critical = Prompt.ask("Critical threshold (0.0-1.0)", default="0.8")
         config["alert_threshold_warning"] = float(warning)
         config["alert_threshold_critical"] = float(critical)
-        console.print(f"[green]Alert thresholds updated[/green]")
+        console.print("[green]Alert thresholds updated[/green]")
     
     elif choice == "4":
         save_logs = Confirm.ask("Save logs by default?")
@@ -648,62 +683,55 @@ def main():
         # No arguments provided, show interactive menu
         show_banner()
         
+        # Define menu options and their handlers
+        menu_options = {
+            "1": ("Check System Status", lambda: status()),
+            "2": ("Train AI Models", lambda: train()),
+            "3": ("Start Basic Monitoring", lambda: _handle_basic_monitoring()),
+            "4": ("Start Verbose Monitoring", lambda: _handle_verbose_monitoring()),
+            "5": ("Start 24/7 Monitoring", lambda: monitor_24x7()),
+            "6": ("Start Background Monitoring", lambda: monitor_background()),
+            "7": ("AI Model Demo", lambda: demo()),
+            "8": ("System Information", lambda: system_info()),
+            "9": ("View Logs", lambda: logs()),
+            "10": ("Configuration", lambda: config()),
+            "11": ("Help", lambda: help_extended()),
+            "12": ("Version Info", lambda: version()),
+            "0": ("Exit", None)
+        }
+        
         while True:
             console.print("\n[bold blue]BADNET Main Menu[/bold blue]")
-            console.print("1. Check System Status")
-            console.print("2. Train AI Models")
-            console.print("3. Start Basic Monitoring")
-            console.print("4. Start Verbose Monitoring")
-            console.print("5. Start 24/7 Monitoring")
-            console.print("6. Start Background Monitoring")
-            console.print("7. AI Model Demo")
-            console.print("8. System Information")
-            console.print("9. View Logs")
-            console.print("10. Configuration")
-            console.print("11. Help")
-            console.print("12. Version Info")
-            console.print("0. Exit")
+            for key, (description, _) in menu_options.items():
+                console.print(f"{key}. {description}")
             
-            choice = Prompt.ask("\nSelect option", choices=["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "0"])
+            choice = Prompt.ask("\nSelect option", choices=list(menu_options.keys()))
             
-            if choice == "1":
-                status()
-            elif choice == "2":
-                train()
-            elif choice == "3":
-                mode = Prompt.ask("Monitoring mode", choices=["system", "network", "both"], default="both")
-                interval = Prompt.ask("Interval (seconds)", default="5")
-                duration = Prompt.ask("Duration (seconds, 0 for continuous)", default="0")
-                duration = int(duration) if duration != "0" else None
-                save_log = Confirm.ask("Save log to file?")
-                monitor(mode=mode, interval=int(interval), duration=duration, save_log=save_log)
-            elif choice == "4":
-                interval = Prompt.ask("Verbose monitoring interval (seconds)", default="5")
-                duration = Prompt.ask("Duration (seconds, 0 for continuous)", default="30")
-                duration = int(duration) if duration != "0" else None
-                verbose_monitor(interval=int(interval), duration=duration)
-            elif choice == "5":
-                monitor_24x7()
-            elif choice == "6":
-                monitor_background()
-            elif choice == "7":
-                demo()
-            elif choice == "8":
-                system_info()
-            elif choice == "9":
-                logs()
-            elif choice == "10":
-                config()
-            elif choice == "11":
-                help_extended()
-            elif choice == "12":
-                version()
-            elif choice == "0":
+            if choice == "0":
                 console.print("\n[bold green]Thank you for using BADNET![/bold green]")
                 break
+            
+            if handler := menu_options[choice][1]:
+                handler()
     else:
         # Arguments provided, use Typer CLI
         app()
+
+def _handle_basic_monitoring():
+    """Handle basic monitoring setup."""
+    mode = Prompt.ask("Monitoring mode", choices=["system", "network", "both"], default="both")
+    interval = Prompt.ask("Interval (seconds)", default="5")
+    duration = Prompt.ask("Duration (seconds, 0 for continuous)", default="0")
+    duration = int(duration) if duration != "0" else None
+    save_log = Confirm.ask("Save log to file?")
+    monitor(mode=mode, interval=int(interval), duration=duration, save_log=save_log)
+
+def _handle_verbose_monitoring():
+    """Handle verbose monitoring setup."""
+    interval = Prompt.ask("Verbose monitoring interval (seconds)", default="5")
+    duration = Prompt.ask("Duration (seconds, 0 for continuous)", default="30")
+    duration = int(duration) if duration != "0" else None
+    verbose_monitor(interval=int(interval), duration=duration)
 
 if __name__ == "__main__":
     main()

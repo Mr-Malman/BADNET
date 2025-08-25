@@ -26,7 +26,7 @@ if [ ! -d "BADNET" ]; then
 fi
 
 # Activate virtual environment
-source BADNET/bin/activate
+source cyber_env/bin/activate
 
 echo "Virtual environment activated"
 echo "AI Model: Ready"

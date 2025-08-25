@@ -22,7 +22,7 @@ python3 -m venv BADNET
 
 # Activate virtual environment
 echo "Activating virtual environment..."
-source BADNET/bin/activate
+source cyber_env/bin/activate
 
 # Upgrade pip
 echo "Upgrading pip..."

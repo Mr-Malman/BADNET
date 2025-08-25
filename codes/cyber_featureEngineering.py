@@ -37,7 +37,12 @@ logger= logging.getLogger('cyber_featureEngineering')
 logger.setLevel(logging.INFO)
 ch = logging.StreamHandler()
 logger.addHandler(ch)
-fh = logging.FileHandler(LOG_DIR + time.strftime("%Y%m%d-%H%M%S") + '.log')
+
+# Ensure LOG_DIR exists and use absolute path
+import os
+log_dir = os.path.abspath(LOG_DIR)
+os.makedirs(log_dir, exist_ok=True)
+fh = logging.FileHandler(os.path.join(log_dir, time.strftime("%Y%m%d-%H%M%S") + '.log'))
 logger.addHandler(fh)
 
 pd.set_option('mode.chained_assignment', None)

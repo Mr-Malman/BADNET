@@ -50,6 +50,12 @@
    # or
    cyber_env\Scripts\activate     # On Windows
    ```
+   ```bash
+   source cyber_env/bin/activate
+pip install -r requirements.txt
+# then run the rest of the setup steps from the script if needed:
+bash -x ./setup.sh 2>&1 | tee setup.debug.log
+   ```
 
 3. **Install dependencies**
    ```bash
@@ -174,7 +180,7 @@ Each alert includes:
 
 1. **Virtual Environment Not Active**
    ```bash
-   source BADNET/bin/activate
+   source cyber_env/bin/activate
    pip install -r requirements.txt
    ```
 
@@ -525,7 +531,7 @@ chmod +x monitor_24x7.sh
 
 ```bash
 # Activate virtual environment first
-source BADNET/bin/activate
+source cyber_env/bin/activate
 
 # Run verbose monitoring
 python3 verbose_monitor.py --interval 5 --duration 30
@@ -682,7 +688,7 @@ python3 verbose_monitor.py --interval 2 --duration 30
 #### **Issue: "Module not found"**
 ```bash
 # Solution: Activate virtual environment
-source BADNET/bin/activate
+source cyber_env/bin/activate
 pip install -r requirements.txt
 ```
 
